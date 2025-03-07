@@ -69,10 +69,6 @@ for col in numerical_features:
     product_catalog_df[col] = pd.to_numeric(product_catalog_df[col], errors='coerce')
 
 
-
-
-
-
 # Generate heatmap with updated numeric columns
 numeric_product_catalog_df = product_catalog_df.select_dtypes(include=[np.number])
 plt.figure(figsize=(10, 6))
