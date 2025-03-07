@@ -16,22 +16,18 @@ print(customer_survey_df.head())
 future_plan_mapping = {"Relax at home": 1, "Work from home": 2, "Move": 3, "Travel": 4}
 customer_survey_df["Future_Plan_Score"] = customer_survey_df["Future Plan"].map(future_plan_mapping)
 
-#Creating a budget score  
-if "Budget" in customer_survey_df.columns:
-    budget_mapping = {"Low": 0, "Medium": 1, "High": 2}
-    customer_survey_df["Budget_Score"] = customer_survey_df["Budget"].map(budget_mapping)
+#Creating a budget score
+budget_mapping = {"low": 0, "medium": 1, "high": 2}
+customer_survey_df["Budget_Score"] = customer_survey_df["Budget"].map(budget_mapping)
 
-
-    customer_survey_df["Budget_Score"] = customer_survey_df["Budget_Score"].fillna(0)
-else:
-    print("'Budget' column is missing! Setting Budget_Score to 0 for all rows.")
-    customer_survey_df["Budget_Score"] = 0 
+# Fill NaN values with the median Budget Score
+customer_survey_df["Budget_Score"].fillna(customer_survey_df["Budget_Score"].median(), inplace=True)
 
 # Converting Customer Reviews sentiment scores into positive/negative classes
 customer_survey_df["Review_Sentiment"] = np.where(customer_survey_df["Customer Reviews"] >= 0, 1, 0)
 
 if "Purchase Frequency" in customer_survey_df.columns:
-    purchase_freq_mapping = {"Rarely": 0, "Occasionally": 1, "Monthly": 2}
+    purchase_freq_mapping = {"rarely": 0, "occasionally": 1, "monthly": 2}
     customer_survey_df["Purchase_Tendency"] = customer_survey_df["Purchase Frequency"].map(purchase_freq_mapping)
 
    
@@ -47,10 +43,10 @@ customer_survey_df["Premium_Buyer"] = np.where((customer_survey_df["Budget_Score
 main_activity_mapping = {"Gaming": 1, "Watching TV": 2, "Reading": 3, "Exercising": 4}
 customer_survey_df["Main_Activity_Score"] = customer_survey_df["Main Activity"].map(main_activity_mapping)
 
-# NLP Feature: Extract keyword-based interest score (to align with recommendation system)
+#  Extracting keyword-based interest score (to align with recommendation system)
 customer_survey_df["Interest_Keywords"] = customer_survey_df["Key Desires"].str.lower()
 
-# NLP Feature: Convert Customer Review text into numerical sentiment score (Placeholder for NLP Processing)
+#  Converting Customer Review text into numerical sentiment score (Placeholder for NLP Processing)
 customer_survey_df["Review_Text_Processed"] = customer_survey_df["Customer Reviews"]
 
 # Preference-based Recommendation Score (Combining Budget, Future Plan & Activity)
@@ -104,23 +100,21 @@ plt.xlabel("Budget Score (0 = Low, 1 = Medium, 2 = High)")
 plt.ylabel("Count")
 plt.show()
 
-# Identify numeric columns with more than one unique value
-valid_numerical_features = customer_survey_df.select_dtypes(include=[np.number]).nunique()
+# Dropping customer
+valid_numerical_features = customer_survey_df.select_dtypes(include=[np.number]).drop(columns=["Customer ID"]).nunique()
 valid_numerical_features = valid_numerical_features[valid_numerical_features > 1].index
+corr_matrix = customer_survey_df[valid_numerical_features].corr()
 
-# Compute the correlation matrix only for valid numerical features
-corr_matrix = customer_survey_df[valid_numerical_features].corr(min_periods=1)
-
-# Plot the heatmap again
+# Heatmap
 plt.figure(figsize=(12, 8))
 sns.heatmap(corr_matrix, annot=True, cmap="coolwarm", linewidths=0.5)
-plt.title("Feature Correlation Heatmap")
+plt.title("Feature Correlation Heatmap (Without Customer ID)")
 plt.xticks(rotation=45, ha="right")
 plt.yticks(rotation=0)
 plt.tight_layout()
 plt.show()
 
-#boxplot
+#Boxplot
 plt.figure(figsize=(12,6))
 sns.boxplot(x="Future_Plan_Score", y="Budget_Score", data=customer_survey_df, palette="coolwarm")
 plt.title("Future Plans vs. Budget Score")
@@ -140,22 +134,19 @@ plt.show()
 plt.figure(figsize=(8,5))
 sns.scatterplot(x="Purchase_Tendency", y="Customer_Engagement_Score", data=customer_survey_df, hue="Sentiment_Score", palette="coolwarm")
 plt.title("Purchase Tendency vs. Customer Engagement")
-plt.xlabel("Purchase Tendency (0 = Rarely, 1 = Occasionally, 2 = Monthly)")
+plt.xlabel("Purchase Tendency (0 = rarely, 1 = occasionally, 2 = monthly)")
 plt.ylabel("Customer Engagement Score")
 plt.show()
 
 
-#barplot
-# Making sure there are no NaN values in Sentiment_Score
-sentiment_counts = customer_survey_df["Sentiment_Score"].dropna().value_counts().sort_index()
-# Convert numerical values (0,1) to categorical labels for better readability
-sentiment_labels = ["Negative" if i == 0 else "Positive" for i in sentiment_counts.index]
-plt.figure(figsize=(7, 5))
-sns.barplot(x=sentiment_labels, y=sentiment_counts.values, palette="magma", hue=None)
-plt.title("Distribution of Sentiment Scores")
-plt.xlabel("Sentiment")
-plt.ylabel("Count")
+plt.figure(figsize=(8,5))
+sns.regplot(x="Future_Plan_Score", y="Preference_Score", data=customer_survey_df, scatter_kws={"alpha":0.6}, line_kws={"color":"red"})
+plt.title("Future Plan Score vs. Preference Score")
+plt.xlabel("Future Plan Score")
+plt.ylabel("Preference Score")
 plt.show()
+
+
 
 
 processed_file_path = "Feature_customer_survey.csv"

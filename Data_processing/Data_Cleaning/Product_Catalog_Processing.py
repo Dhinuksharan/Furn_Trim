@@ -120,9 +120,6 @@ plt.ylabel("Sales Volume")
 plt.show()
 
 
-
-
-
 processed_file_path = "Processed_product_catalog.csv"
 print(" Processed file saved successfully at:", processed_file_path)
 product_catalog_df.to_csv(processed_file_path, index=False)

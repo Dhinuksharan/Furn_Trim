@@ -15,16 +15,6 @@ customer_survey_df
 column_list=(list(customer_survey_df))
 print(column_list)
 
-#Observing the different types of data
-
-print("=============================================")
-print("Data types of the columns in the data frame:", customer_survey_df.dtypes)
-print("=============================================")
-print("Shape of the data frame:", customer_survey_df.shape)
-print("=============================================")
-print("Information about the data frame:", customer_survey_df.info())
-customer_survey_df.head()
-
 #Checking for missing values
 print(customer_survey_df.isnull().sum())
 
@@ -39,20 +29,19 @@ for col in categorical_cols:
         customer_survey_df[col] = customer_survey_df[col].str.lower().str.strip()
 
     
-
-
-#converting data types
+# Converting data types
 convert_types = {
-    "Recommendation Score": int,
+    "Recommendation Score": int,  # Keep as integer without scaling
     "Customer Reviews": float
 }
+
 for col, dtype in convert_types.items():
     if col in customer_survey_df.columns:
         customer_survey_df[col] = customer_survey_df[col].astype(dtype)
 
-#Nomrmalizing numerical features
+# Normalizing using StandardScaler
 scaler = StandardScaler()
-scaled_cols = ["Recommendation Score", "Customer Reviews"]
+scaled_cols = ["Customer Reviews"]  
 customer_survey_df[scaled_cols] = scaler.fit_transform(customer_survey_df[scaled_cols])
 
 # Visualizing Outliers

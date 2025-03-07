@@ -83,7 +83,7 @@ plt.show()
 
 
 
-# 1️⃣ Feature Correlation Heatmap
+#Feature Correlation Heatmap
 plt.figure(figsize=(10, 6))
 sns.heatmap(product_catalog_df[numerical_features].corr(), annot=True, cmap="coolwarm", linewidths=0.5)
 plt.title("Feature Correlation Heatmap")
