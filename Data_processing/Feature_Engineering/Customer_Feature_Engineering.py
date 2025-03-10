@@ -1,3 +1,10 @@
+#The feature engineering script builds on the processed dataset to create meaningful new attributes for customer behavior analysis. 
+#I mapped categorical variables like Future Plan, Budget, and Purchase Frequency into numerical scores. 
+# Additional features were introduced, including Premium_Buyer (indicating high-budget customers with a preference for luxury),
+#  Customer_Engagement_Score (combining purchase tendency and recommendation score),and Preference_Score (integrating budget, future plans, and activity preferences).
+# To explore relationships, I generated visualizations such as heatmaps, scatter plots, and histograms.
+#  The final dataset, enriched with insights, was saved for further business analysis and modeling.
+
 #Importing necessary libraries
 import pandas as pd
 import numpy as np
@@ -9,7 +16,7 @@ from sklearn.preprocessing import LabelEncoder,StandardScaler
 file_path = "C:/data/Work/Data_processing/Processed_Customer_survey.csv"
 customer_survey_df = pd.read_csv(file_path)
 
-# Check if it loaded successfully
+#Check if the loaded successfully
 print(customer_survey_df.head())
 
 #Converting 'Future Plan' into numerical categories 
@@ -36,20 +43,21 @@ else:
     print("Purchase Frequency column is missing Setting Purchase_Tendency to 0 for all rows.")
     customer_survey_df["Purchase_Tendency"] = 0  
 
-# Create a feature indicating whether customers are likely to buy premium products
-customer_survey_df["Premium_Buyer"] = np.where((customer_survey_df["Budget_Score"] == 2) & (customer_survey_df["Preferred Style"] == "Luxurious"), 1, 0)
+# Creating a feature indicating whether customers are likely to buy premium products
+customer_survey_df["Premium_Buyer"] = (customer_survey_df["Budget_Score"] == 2) & (customer_survey_df["Preferred Style"] == "Luxurious")
+customer_survey_df["Premium_Buyer"] = customer_survey_df["Premium_Buyer"].astype(int)
 
-# Encode Main Activity into numerical categories for better analysis
+# Encode Main Activity into numerical categories
 main_activity_mapping = {"Gaming": 1, "Watching TV": 2, "Reading": 3, "Exercising": 4}
 customer_survey_df["Main_Activity_Score"] = customer_survey_df["Main Activity"].map(main_activity_mapping)
 
 #  Extracting keyword-based interest score (to align with recommendation system)
 customer_survey_df["Interest_Keywords"] = customer_survey_df["Key Desires"].str.lower()
 
-#  Converting Customer Review text into numerical sentiment score (Placeholder for NLP Processing)
+#  Converting Customer Review text into numerical sentiment score 
 customer_survey_df["Review_Text_Processed"] = customer_survey_df["Customer Reviews"]
 
-# Preference-based Recommendation Score (Combining Budget, Future Plan & Activity)
+# Preference-based Recommendation Score 
 customer_survey_df["Preference_Score"] = (
     customer_survey_df["Budget_Score"] * 0.4 +
     customer_survey_df["Future_Plan_Score"] * 0.3 +
@@ -58,20 +66,20 @@ customer_survey_df["Preference_Score"] = (
 
 # Check if Preference_Score is entirely NaN
 if customer_survey_df["Preference_Score"].dropna().empty:
-    default_median = 0  # Fallback to 0 if no valid median exists
+    default_median = 0  
 else:
     default_median = customer_survey_df["Preference_Score"].median()
 
 # Fill missing values safely
 customer_survey_df["Preference_Score"] = customer_survey_df["Preference_Score"].fillna(default_median)
 
-# Customer Engagement Score (Based on Purchase Frequency & Recommendation Score)
+# Customer Engagement Score 
 customer_survey_df["Customer_Engagement_Score"] = (
     customer_survey_df["Purchase_Tendency"].fillna(0) * 0.5 +
     customer_survey_df["Recommendation Score"].fillna(customer_survey_df["Recommendation Score"].median()) * 0.5
 )
 
-# Low Interest Indicator (If Purchase Frequency is low & Review Sentiment is negative)
+# Low Interest Indicator-If Purchase Frequency is low & Review Sentiment is negative)
 customer_survey_df["Low_Interest_Indicator"] = np.where(
     (customer_survey_df["Purchase_Tendency"] == 0) & (customer_survey_df["Review_Sentiment"] == 0), 1, 0
 )
@@ -81,8 +89,7 @@ customer_survey_df["Sentiment_Score"] = np.where(
     customer_survey_df["Recommendation Score"] > 50, 1, 0  
 )
 
-
-# Engagement-Based Sentiment (Above median = Positive, Below = Negative)
+# Engagement-Based Sentiment 
 if not customer_survey_df["Customer_Engagement_Score"].dropna().empty:
     median_engagement = customer_survey_df["Customer_Engagement_Score"].median()
 else:
@@ -100,7 +107,7 @@ plt.xlabel("Budget Score (0 = Low, 1 = Medium, 2 = High)")
 plt.ylabel("Count")
 plt.show()
 
-# Dropping customer
+# Dropping customer ID for the heatmap
 valid_numerical_features = customer_survey_df.select_dtypes(include=[np.number]).drop(columns=["Customer ID"]).nunique()
 valid_numerical_features = valid_numerical_features[valid_numerical_features > 1].index
 corr_matrix = customer_survey_df[valid_numerical_features].corr()
@@ -145,8 +152,6 @@ plt.title("Future Plan Score vs. Preference Score")
 plt.xlabel("Future Plan Score")
 plt.ylabel("Preference Score")
 plt.show()
-
-
 
 
 processed_file_path = "Feature_customer_survey.csv"

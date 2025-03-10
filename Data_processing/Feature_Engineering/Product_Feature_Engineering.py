@@ -1,3 +1,9 @@
+#In this phase additional attributes were derived to enhance product insights. The "Sales-to-Return Ratio" was introduced to measure efficiency in handling returns, while "Revenue Per Product" quantified total revenue generated per item. 
+#A calculated "Online Sellability Score" assessed the likelihood of online sales success, and "Storage Efficiency Score" measured how effectively revenue was generated relative to storage costs. 
+#A "High Demand Indicator" was assigned to products in the top 25% of sales, while "Implicit Feedback Score" translated customer sentiment into numerical values.
+# Additionally, an "Expert Judgment Score" was introduced, combining demand, ratings, and revenue performance to highlight high-impact products.
+# The engineered features were validated with visualizations, including correlation heatmaps and box plots, before the final dataset was saved for further analysis.
+
 # Importing necessary libraries
 import pandas as pd
 import numpy as np
@@ -12,7 +18,7 @@ product_catalog_df = pd.read_csv(file_path)
 # Check if it loaded successfully
 print(product_catalog_df.head())
 
-# Checking for missing values before processing
+# Checking for missing values 
 print("Missing values before processing:")
 print(product_catalog_df.isnull().sum())
 
@@ -32,8 +38,6 @@ print(product_catalog_df["Online_Sellability_Score"].unique())
 
 # Creating Storage Efficiency Score
 product_catalog_df["Storage_Efficiency_Score"] = product_catalog_df["Revenue_Per_Product"] / (product_catalog_df["Storage Cost"] + 1)
-
-
 
 # High Demand Indicator (Top 25% best-selling products)
 threshold_sales = product_catalog_df["Sales Volume"].quantile(0.75)
@@ -75,8 +79,6 @@ plt.figure(figsize=(10, 6))
 sns.heatmap(numeric_product_catalog_df.corr(), annot=True, cmap="coolwarm", linewidths=0.5)
 plt.title("Feature Correlation Heatmap")
 plt.show()
-
-
 
 
 #Feature Correlation Heatmap

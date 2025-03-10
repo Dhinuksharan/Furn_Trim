@@ -1,3 +1,8 @@
+#In the data processing script, I started by loading the customer survey dataset and performing an initial data quality check—inspecting column names, checking for missing values, and detecting duplicates.
+#To ensure consistency, I standardized categorical data (eg. converting text to lowercase and stripping spaces).
+# Numerical columns such as Recommendation Score and Customer Reviews were formatted to appropriate data types, with only Customer Reviews being normalized using StandardScaler. Outlier visualization was conducted using a boxplot to understand data distribution.
+# Finally, after verifying all transformations, the cleaned dataset was saved for further feature engineering.
+
 #Importing necessary libraries
 import pandas as pd
 import numpy as np
@@ -19,7 +24,7 @@ print(column_list)
 print(customer_survey_df.isnull().sum())
 
 #Checking for duplicates
-print("Product Catalog Duplicates:", customer_survey_df.duplicated().sum())
+print("Customer Survey Duplicates:", customer_survey_df.duplicated().sum())
 
 
 #Standardizing categorical data

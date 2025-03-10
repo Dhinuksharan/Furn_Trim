@@ -1,8 +1,14 @@
+#In this phase, the product catalog dataset was loaded, and initial checks were performed to verify its structure, including missing values, duplicate entries, and column data types.
+# Key categorical fields such as "Payment Type" were standardized for consistency, and the "Sellable Online" column was mapped to binary values (0 or 1).
+# Numerical features like "Price," "Return Rate," and "Storage Cost" were scaled using StandardScaler to ensure uniformity.
+# Basic exploratory analysis was carried out through visualizations, including histograms, scatter plots, and heatmaps, to identify trends, outliers, and correlations within the dataset.
+
+#Importing necessary libraries
 import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import LabelEncoder,StandardScaler
+from sklearn.preprocessing import StandardScaler
 
 #Loading dataset
 product_catalog_df = pd.read_csv("C:\\data\\Work\\data\\product_catalog_new.csv")
@@ -41,7 +47,6 @@ print("Product Catalog Duplicates:", product_catalog_df.duplicated().sum())
 
 
 #Checking outliers
-print("\n--- Checking Outliers (Boxplot) ---")
 plt.figure(figsize=(8,5))
 sns.boxplot(x=product_catalog_df["Price"])
 plt.title("Price Distribution Before Handling Outliers")
