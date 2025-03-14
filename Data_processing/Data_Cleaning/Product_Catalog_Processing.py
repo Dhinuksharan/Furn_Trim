@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 
 #Loading dataset
-product_catalog_df = pd.read_csv("C:\\data\\Work\\data\\product_catalog_new.csv")
+product_catalog_df = pd.read_csv("C:\\data\\Work\\Dataset\\product_catalog_new.csv")
 
 #Checking whether the dataset has been loaded properly
 product_catalog_df
@@ -52,26 +52,25 @@ sns.boxplot(x=product_catalog_df["Price"])
 plt.title("Price Distribution Before Handling Outliers")
 plt.show()
 
-#Standardizing categorical data
-categorical_cols = [ "Payment Type"]
-for col in categorical_cols:
-    if col in product_catalog_df.columns:
-        product_catalog_df[col] = product_catalog_df[col].str.lower().str.strip()
+#Standardizing categorical data 
 
-#map sellable online to 0 and 1
-if "Sellable Online" in product_catalog_df.columns:
-    product_catalog_df["Sellable Online"] = product_catalog_df["Sellable Online"].replace({"Yes": 1, "No": 0}).astype(int)
+categorical_cols = [ "Payment Type"] 
+for col in categorical_cols: 
+    if col in product_catalog_df.columns: 
+     product_catalog_df[col] = product_catalog_df[col].str.lower().str.strip() 
 
-# Scaling only selected numerical columns
-scaled_cols = ["Price", "Return Rate", "Storage Cost"]
-if "Seasonality Score" in product_catalog_df.columns:  # Checking if it exists
-    scaled_cols.append("Seasonality Score")
+#map sellable online to 0 and 1 
 
-scaler = StandardScaler()
-product_catalog_df[scaled_cols] = scaler.fit_transform(product_catalog_df[scaled_cols])
+if "Sellable Online" in product_catalog_df.columns: 
+    product_catalog_df["Sellable Online"] = product_catalog_df["Sellable Online"].replace({"Yes": 1, "No": 0}).astype(int) 
 
+# Scaling only selected numerical columns 
+scaled_cols = ["Price", "Return Rate", "Storage Cost"] 
 
- #Convert data types
+if "Seasonality Score" in product_catalog_df.columns:  # Checking if it exists 
+    scaled_cols.append("Seasonality Score") 
+
+#Convert data types
 convert_types = {
     "Price": float,
     "Sales Volume": int, 
@@ -82,6 +81,12 @@ convert_types = {
 for col, dtype in convert_types.items():
     if col in product_catalog_df.columns:
         product_catalog_df[col] = pd.to_numeric(product_catalog_df[col], errors='coerce').astype(dtype)
+
+# Scaling only selected numerical columns
+scaled_cols = ["Price", "Return Rate", "Storage Cost"]
+if "Seasonality Score" in product_catalog_df.columns:  # Checking if it exists
+    scaled_cols.append("Seasonality Score")
+
 
 
 #Bar plot for products vs sales

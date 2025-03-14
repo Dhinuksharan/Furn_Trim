@@ -12,10 +12,10 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 
 # Loading the dataset
-file_path = "C:/data/Work/Data_processing/Processed_product_catalog.csv"
+file_path = "C:/data/Work/Data_processing/Data_Cleaning/Processed_product_catalog.csv"
 product_catalog_df = pd.read_csv(file_path)
 
-# Check if it loaded successfully
+# Checking if the dataset is loaded successfully
 print(product_catalog_df.head())
 
 # Checking for missing values 
@@ -27,7 +27,6 @@ product_catalog_df["Sales_to_Return_Ratio"] = product_catalog_df["Sales Volume"]
 
 # Creating Revenue per product
 product_catalog_df["Revenue_Per_Product"] = product_catalog_df["Sales Volume"] * product_catalog_df["Price"]
-
 
 #calculating the online sellability score
 product_catalog_df["Online_Sellability_Score"] = product_catalog_df["Sellable Online"] * product_catalog_df["Sales Volume"] / (product_catalog_df["Sales Volume"].max() + 1)
@@ -72,13 +71,6 @@ numerical_features = ["Sales_to_Return_Ratio", "Revenue_Per_Product", "Storage_E
 for col in numerical_features:
     product_catalog_df[col] = pd.to_numeric(product_catalog_df[col], errors='coerce')
 
-
-# Generate heatmap with updated numeric columns
-numeric_product_catalog_df = product_catalog_df.select_dtypes(include=[np.number])
-plt.figure(figsize=(10, 6))
-sns.heatmap(numeric_product_catalog_df.corr(), annot=True, cmap="coolwarm", linewidths=0.5)
-plt.title("Feature Correlation Heatmap")
-plt.show()
 
 
 #Feature Correlation Heatmap
