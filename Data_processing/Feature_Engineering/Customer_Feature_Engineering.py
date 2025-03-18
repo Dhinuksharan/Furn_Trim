@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelEncoder,StandardScaler
 
 #Loading the dataset
-file_path = "C:/data/Work/Data_processing/Processed_Customer_survey.csv"
+file_path = "C:/data/Work/Data_processing/Data_Cleaning/Processed_Customer_survey.csv"
 customer_survey_df = pd.read_csv(file_path)
 
 #Check if the loaded successfully
@@ -36,16 +36,18 @@ customer_survey_df["Review_Sentiment"] = np.where(customer_survey_df["Customer R
 if "Purchase Frequency" in customer_survey_df.columns:
     purchase_freq_mapping = {"rarely": 0, "occasionally": 1, "monthly": 2}
     customer_survey_df["Purchase_Tendency"] = customer_survey_df["Purchase Frequency"].map(purchase_freq_mapping)
-
-   
     customer_survey_df["Purchase_Tendency"] = customer_survey_df["Purchase_Tendency"].fillna(0)
 else:
     print("Purchase Frequency column is missing Setting Purchase_Tendency to 0 for all rows.")
     customer_survey_df["Purchase_Tendency"] = 0  
 
+
 # Creating a feature indicating whether customers are likely to buy premium products
-customer_survey_df["Premium_Buyer"] = (customer_survey_df["Budget_Score"] == 2) & (customer_survey_df["Preferred Style"] == "Luxurious")
-customer_survey_df["Premium_Buyer"] = customer_survey_df["Premium_Buyer"].astype(int)
+customer_survey_df["Premium_Buyer"] = 0  # Reset column
+
+customer_survey_df.loc[ (customer_survey_df["Budget_Score"] == 2) &  (customer_survey_df["Preferred Style"] == "luxurious"),  "Premium_Buyer"] = 1
+
+
 
 # Encode Main Activity into numerical categories
 main_activity_mapping = {"Gaming": 1, "Watching TV": 2, "Reading": 3, "Exercising": 4}
@@ -85,10 +87,8 @@ customer_survey_df["Low_Interest_Indicator"] = np.where(
 )
 
 # Sentiment from Recommendation Score
-customer_survey_df["Sentiment_Score"] = np.where(
-    customer_survey_df["Recommendation Score"] > 50, 1, 0  
-)
 
+customer_survey_df["Sentiment_Score"] = np.where(customer_survey_df["Recommendation Score"] > 50, 1, 0) 
 # Engagement-Based Sentiment 
 if not customer_survey_df["Customer_Engagement_Score"].dropna().empty:
     median_engagement = customer_survey_df["Customer_Engagement_Score"].median()
