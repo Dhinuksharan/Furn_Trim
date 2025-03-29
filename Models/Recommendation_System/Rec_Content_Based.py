@@ -1,16 +1,17 @@
-# Importing necessary libraries
+# Import required libraries
 import pandas as pd
-import ast
 import numpy as np
-import random
-import seaborn as sns
+import ast
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics.pairwise import cosine_similarity
-import matplotlib.pyplot as plt
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.preprocessing import StandardScaler
-#content based filtering
-#Loading dataset
+import matplotlib.pyplot as plt
+
+#Load the product catalog
 product_catalog_df =pd.read_csv ("C:/data/Work/Data_processing/Feature_Engineering/Feature_product_catalog.csv")
+
+# Load the customer survey dataset
+customer_survey_df = pd.read_csv("C:/data/Work/Data_processing/Feature_Engineering/Feature_customer_survey.csv")
 
 # Display basic information about the dataset
 product_info = {
@@ -73,10 +74,11 @@ print("Cosine Similarity Matrix Shape:", cosine_sim.shape)
 # Show a sample of the similarity matrix
 print("Sample Similarity Scores:\n", np.round(cosine_sim[:5, :5], 2))
 
-def recommend_products(product_name, product_catalog_df, cosine_sim, top_n=5, min_similarity=0.1):
+#Content based recommendation system
+def recommend_products(product_name, product_catalog_df, cosine_sim, top_n=5, min_similarity=0.05):
     print(f"\nSearching for recommendations for: {product_name}")
     
-    # Find all indices of the selected product name
+    # Find index of the product in the catalog
     product_indices = product_catalog_df[product_catalog_df["Product Name"] == product_name].index
 
     if product_indices.empty:
@@ -86,35 +88,36 @@ def recommend_products(product_name, product_catalog_df, cosine_sim, top_n=5, mi
     product_index = product_indices[0]
     similarity_scores = list(enumerate(cosine_sim[product_index]))
 
-    # Sort by similarity and exclude itself
-    sorted_products = sorted(similarity_scores, key=lambda x: x[1], reverse=True)[1:]
-    
+    # Sort by similarity in descending order
+    sorted_products = sorted(similarity_scores, key=lambda x: x[1], reverse=True)
+
     recommendations = []
     seen_products = set()
 
     for idx, score in sorted_products:
-        rec_product = product_catalog_df.iloc[idx]
+        rec_product = product_catalog_df.iloc[idx]["Product Name"]
 
-        # Print similarity scores for debugging
-        print(f"Checking Product: {rec_product['Product Name']} - Score: {score:.2f}")
+        # Skip the same product and low scores
+        if rec_product == product_name or score < min_similarity:
+            continue
 
-        # Only add unique product names, avoiding duplicates
-        if rec_product["Product Name"] not in seen_products and score >= min_similarity:
-            recommendations.append(rec_product["Product Name"])
-            seen_products.add(rec_product["Product Name"])
+        if rec_product not in seen_products:
+            print(f"Checking Product: {rec_product} - Score: {score:.2f}")
+            recommendations.append(rec_product)
+            seen_products.add(rec_product)
 
         if len(recommendations) == top_n:
             break
 
     if not recommendations:
-        print("No strong matches found.")   
+        print("No strong matches found.")
+        return ["No strong matches found. Try another product."]
     
-    return recommendations if recommendations else ["No strong matches found. Try another product."]
+    return recommendations
 
-
-# Use Case 
-# Find similar products for a given product
-product_to_search = "Rustic Bookshelf"  # Change this to a real product name from your dataset
+# Use Case to see whether the system works
+# Finding similar products for a given product
+product_to_search = "Rustic Bookshelf"  
 recommendations = recommend_products(product_to_search, product_catalog_df, cosine_sim)
 
 # Display recommendations
