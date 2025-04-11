@@ -49,8 +49,8 @@ for product_id in range(1, num_entries + 1):
         random.choice(payment_types),
         random.choice(sellable_online_options),
         random.randint(10, 1000),  # Sales volume
-        round(random.uniform(0, 20), 2),  # Return Rate (%)
-        round(random.uniform(5, 200), 2),  # Storage Cost ($)
+        round(random.uniform(0, 20), 2),  # Return Rate 
+        round(random.uniform(5, 200), 2),  # Storage Cost 
         random.randint(1, 10),  # Seasonality Score (1-10)
         random.choice(["Positive", "Neutral", "Negative"])  # Implicit Feedback
     ])

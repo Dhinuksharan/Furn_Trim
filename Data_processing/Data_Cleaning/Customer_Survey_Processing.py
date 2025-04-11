@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelEncoder,StandardScaler
 
 #Loading the dataset
-customer_survey_df=pd.read_csv("C:\\data\\work\\data\\customer_survey_new.csv")
+customer_survey_df=pd.read_csv(".\\Dataset\\customer_survey_new.csv")
 
 #Checking the dataset
 customer_survey_df
@@ -36,7 +36,7 @@ for col in categorical_cols:
     
 # Converting data types
 convert_types = {
-    "Recommendation Score": int,  # Keep as integer without scaling
+    "Recommendation Score": int,    
     "Customer Reviews": float
 }
 
@@ -55,7 +55,7 @@ sns.boxplot(x=customer_survey_df["Recommendation Score"])
 plt.title("Recommendation Score Distribution After Removing Outliers")
 plt.show()
 
-processed_file_path = "Processed_Customer_survey.csv"
+processed_file_path = ".\\Data_processing\\Data_Cleaning\\Processed_Customer_survey.csv"
 
 print("Reached the CSV saving step. Attempting to save...")
 customer_survey_df.to_csv(processed_file_path, index=False)

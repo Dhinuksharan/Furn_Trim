@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 
 #Loading dataset
-product_catalog_df = pd.read_csv("C:\\data\\Work\\Dataset\\product_catalog_new.csv")
+product_catalog_df = pd.read_csv(".\\Dataset\\product_catalog_new.csv")
 
 #Checking whether the dataset has been loaded properly
 product_catalog_df
@@ -130,7 +130,7 @@ plt.ylabel("Sales Volume")
 plt.show()
 
 
-processed_file_path = "Processed_product_catalog.csv"
+processed_file_path = ".\\Data_processing\\Data_Cleaning\\Processed_product_catalog.csv"
 print(" Processed file saved successfully at:", processed_file_path)
 product_catalog_df.to_csv(processed_file_path, index=False)
 

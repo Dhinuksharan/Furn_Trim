@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelEncoder,StandardScaler
 
 #Loading the dataset
-file_path = "C:/data/Work/Data_processing/Data_Cleaning/Processed_Customer_survey.csv"
+file_path = "./Data_processing/Data_Cleaning/Processed_Customer_survey.csv"
 customer_survey_df = pd.read_csv(file_path)
 
 #Check if the loaded successfully
