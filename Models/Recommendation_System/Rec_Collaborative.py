@@ -36,7 +36,7 @@ product_catalog_df["Product Name"] = product_catalog_df["Product Name"].str.lowe
 customer_survey_df = customer_survey_df[customer_survey_df["Product Name"].isin(product_catalog_df["Product Name"])]
 
 # Keep only needed columns
-survey_cols = ["Customer ID", "Product Name", "Recommendation Score", "Purchase Frequency", "Review_Sentiment", "Engagement_Sentiment"]
+survey_cols = ["Customer ID", "Product Name", "Recommendation Score"]
 customer_survey_df = customer_survey_df[survey_cols]
 
 catalog_cols = ["Product Name", "Implicit_Feedback_Score"]
@@ -64,16 +64,6 @@ interaction_matrix.fillna(0, inplace=True)
 #  Display final interaction matrix
 print("User-Product Interaction Matrix:")
 print(interaction_matrix.head())
-
-# Creating a binary version of the interaction matrix (1 = interacted, 0 = not interacted)
-binary_matrix = (interaction_matrix > 0).astype(int)
-
-# Filter out users who haven’t interacted with any products
-binary_matrix = binary_matrix[binary_matrix.sum(axis=1) > 0]
-
-# Ouput
-print("Binary User-Product Matrix Sample:")
-print(binary_matrix.head(10))
 
 # Transpose interaction matrix to get Products as rows and Customers as columns
 item_user_matrix = interaction_matrix.T
@@ -110,4 +100,5 @@ def recommend_similar_items(product_name, top_n=5):
 
 # Example 
 recommend_similar_items("rustic bookshelf")
+
 
